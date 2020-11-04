@@ -1,0 +1,80 @@
+name: Release Documentation
+
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  main:
+    name: Build the release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Define the version
+        id: version
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | python -c 'import sys; a=sys.stdin.read().strip(); print(a.split("/")[-1])')
+          echo "##[set-output name=version;]$VERSION"
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.5'
+
+      - name: Install mkdocs
+        run: |
+          mkdir python-mkdocs-venv;
+          python -m venv python-mkdocs-venv;
+          source python-mkdocs-venv/bin/activate;
+          pip install -U mkdocs;
+
+      - name: Build the documentation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          source python-mkdocs-venv/bin/activate;
+          cd documentation;
+          mkdocs build -d ../../release;
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+
+      - name: Package the release
+        id: package-the-release
+        run: |
+          cd ../release
+          zip -9 -r "chiro-ue4-documentation-${{ steps.version.outputs.version }}.zip" .
+
+      - name: Upload the release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: "${{ steps.create-release.outputs.upload_url }}"
+          asset_path: "../release/chiro-ue4-documentation-${{ steps.version.outputs.version }}.zip"
+          asset_name: "chiro-ue4-documentation-${{ steps.version.outputs.version }}.zip"
+          asset_content_type: application/zip
+
+      - name: Push to publish
+        env:
+          CUST_GITHUB_API_TOKEN: ${{ secrets.CUST_GITHUB_API_TOKEN }}
+        run: |
+          cd ../release
+          rm -f chiro-ue4-documentation-*.zip
+
+          git config --global user.name "GitHub Action"
+
+          git init -b docs/release/${{ steps.version.outputs.version }}
+          git add .
+          git commit -m 'Release ${{ steps.version.outputs.version }}';
+
+          git remote add main "https://$CUST_GITHUB_API_TOKEN@github.com/vespero-group/chiro-ue4.git"
+          git push main docs/release/${{ steps.version.outputs.version }}
