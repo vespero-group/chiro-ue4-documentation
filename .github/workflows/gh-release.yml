@@ -69,6 +69,7 @@ jobs:
         run: |
           cd ../release
           rm -f chiro-ue4-documentation-*.zip
+          touch .nojekyll
 
           git config --global user.name "GitHub Action"
 
