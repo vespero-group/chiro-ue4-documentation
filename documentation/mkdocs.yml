@@ -21,6 +21,8 @@ nav:
       - 'Export FBX': 'export-fbx.md'
       - 'Re-Pose': 're-pose.md'
       - 'Select Bones': 'select-bone-group.md'
+    - 'Releases':
+      - 'Changelogs': 'changelog.md'
 
 markdown_extensions:
   - admonition
