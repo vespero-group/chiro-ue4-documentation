@@ -35,6 +35,18 @@ jobs:
         run: |
           source python-mkdocs-venv/bin/activate;
           cd documentation;
+
+          docker run \
+                --rm \
+                -v "$(pwd)":/usr/local/src/your-app \
+                ferrarimarco/github-changelog-generator \
+                -u vespero-group -p chiro-ue4 \
+                -t $GITHUB_TOKEN \
+                --no-unreleased --no-pull-requests --no-issues-wo-labels \
+                --exclude-labels 'repo maintenance' \
+                --release-url 'https://github.com/vespero-group/chiro-ue4/releases/tag/%s' \
+                --output changelog.md
+
           mkdocs build -d ../../release;
 
       - name: Create Release
@@ -69,6 +81,7 @@ jobs:
         run: |
           cd ../release
           rm -f chiro-ue4-documentation-*.zip
+          touch .nojekyll
 
           git config --global user.name "GitHub Action"
 
