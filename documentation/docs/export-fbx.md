@@ -1,5 +1,8 @@
 # Export FBX
 
+!!! Warning
+    Your project (the .blend file) must be saved on disk for this button to become active.
+
 Export to FBX with autocorrection.
 Does not change anything in the open blend scene or file.
 
@@ -13,8 +16,8 @@ This operation:
 
 File -> Export -> FBX (Chiro UE4 Mannequin) -> Save as ...
 
-!!! WARNING
-    You only choose the file name. The folder is of the original blend file
+!!! Note
+    You only choose the file name. The folder is of the original blend file.
 
 [![Export FBX Menu](img/feature/export-fbx/export-fbx-menu.png)](img/feature/export-fbx/export-fbx-menu.png)
 

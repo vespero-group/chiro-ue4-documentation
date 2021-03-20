@@ -412,7 +412,8 @@ that uses correct export settings and takes care about some extra stuff that you
 For more details on the Export FBX operator, see its own documentation section.
 
 !!! Note
-    Export FBX operator saves files into the same folder with your current .blend file 
+    Export FBX operator saves files into the same folder with your current .blend file.  
+    If your project was not saved on disk, the export menues will be inactive (greyed out).
 
 !!! Warning
     The export may take some time. Wait until the dropdown disappears from the screen.
